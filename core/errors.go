@@ -11,7 +11,7 @@ var (
 	// do not match.
 	ErrWrongPassword = &httperr.Error{HTTPStatus: http.StatusUnauthorized, Code: "wrong-password", Message: "Имя пользователя и пароль не совпадают."}
 
-	ErrUserDeleted = httperr.NewForbidden("user-deleted", "Cannot continue because the user is deleted.")
+	ErrUserDeleted = httperr.NewForbidden("user-deleted", "Не удается продолжить, так как пользователь удален.")
 )
 
 var (

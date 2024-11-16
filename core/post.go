@@ -255,7 +255,7 @@ func GetPost(ctx context.Context, db *sql.DB, postID *uid.ID, publicID string, v
 
 	rows, err := db.QueryContext(ctx, query, args...)
 	if err != nil {
-		return nil, fmt.Errorf("db error on query '%s' with args (%v)", query, args)
+		return nil, fmt.Errorf("ошибка базы данных при запросе '%s' с аргументами (%v)", query, args)
 	}
 
 	posts, err := scanPosts(ctx, db, rows, viewer)

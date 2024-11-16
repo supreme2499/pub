@@ -42,7 +42,7 @@ func (t ContentType) MarshalText() ([]byte, error) {
 	case ContentTypeComment:
 		return []byte("comment"), nil
 	}
-	return nil, errors.New("unsupported content type")
+	return nil, errors.New("неподдерживаемый тип контента")
 }
 
 func (t *ContentType) UnmarshalText(data []byte) error {
@@ -52,7 +52,7 @@ func (t *ContentType) UnmarshalText(data []byte) error {
 	case "comment":
 		*t = ContentTypeComment
 	default:
-		return errors.New("unsupported content type")
+		return errors.New("неподдерживаемый тип контента")
 	}
 	return nil
 }
@@ -265,7 +265,7 @@ func scanComments(ctx context.Context, db *sql.DB, rows *sql.Rows, viewer *uid.I
 	}
 
 	if err := populateCommentAuthors(ctx, db, comments, viewerAdmin); err != nil {
-		return nil, fmt.Errorf("failed to populate comments authors: %w", err)
+		return nil, fmt.Errorf("не удалось заполнить комментарии авторов: %w", err)
 	}
 
 	// If a comment is deleted and the viewer doesn't have the privilege to see
@@ -873,7 +873,7 @@ func GetSiteComments(ctx context.Context, db *sql.DB, limit int, next *string, v
 	if next != nil {
 		nextID, err := uid.FromString(*next)
 		if err != nil {
-			return nil, nil, errors.New("invalid next for site comments")
+			return nil, nil, errors.New("недопустимый следующий пункт в комментариях к сайту")
 		}
 		where = "WHERE id <= ? "
 		args = append(args, nextID)

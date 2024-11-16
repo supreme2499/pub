@@ -76,7 +76,7 @@ func GetSiteSettings(ctx context.Context, db *sql.DB) (*SiteSettings, error) {
 	err := db.QueryRowContext(ctx, "SELECT `value` FROM application_data WHERE `key` = ?", "site_settings").Scan(&jsonText)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			return nil, fmt.Errorf("error reading site_settings from db: %w", err)
+			return nil, fmt.Errorf("ошибка чтения site_settings из базы данных: %w", err)
 		}
 	}
 

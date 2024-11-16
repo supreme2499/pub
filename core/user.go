@@ -206,7 +206,7 @@ func HashPassword(password []byte) ([]byte, error) {
 	password = trimPassword(password)
 	hash, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
 	if err != nil {
-		return nil, fmt.Errorf("error hashing password: %w", err)
+		return nil, fmt.Errorf("ошибка хэширования пароля:%w", err)
 	}
 	return hash, nil
 }
@@ -386,7 +386,7 @@ func scanUsers(ctx context.Context, db *sql.DB, rows *sql.Rows, viewer *uid.ID) 
 	}
 
 	if err := fetchBadges(db, users...); err != nil {
-		return nil, fmt.Errorf("fetching badges: %w", err)
+		return nil, fmt.Errorf("получение значков: %w", err)
 	}
 
 	viewerAdmin, err := IsAdmin(db, viewer)
@@ -922,7 +922,7 @@ func (u *User) DeleteProPicTx(ctx context.Context, tx *sql.Tx) error {
 		return nil
 	}
 	if _, err := u.db.ExecContext(ctx, "UPDATE users SET pro_pic = NULL where id = ?", u.ID); err != nil {
-		return fmt.Errorf("failed to set users.pro_pic to null for user %s: %w", u.Username, err)
+		return fmt.Errorf("не удалось присвоить users.pro_pic значение null для пользователя %s: %w", u.Username, err)
 	}
 	if err := images.DeleteImagesTx(ctx, tx, u.db, *u.ProPic.ID); err != nil {
 		return fmt.Errorf("не удалось удалить фотографию пользователя %s: %w", u.Username, err)

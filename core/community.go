@@ -519,7 +519,7 @@ func (c *Community) UpdateProPic(ctx context.Context, image []byte) error {
 			Fit:    images.ImageFitContain,
 		})
 		if err != nil {
-			return fmt.Errorf("fail to save community profile picture: %w", err)
+			return fmt.Errorf("не удалось сохранить фотографию профиля сообщества: %w", err)
 		}
 		if _, err := tx.ExecContext(ctx, "UPDATE communities SET pro_pic_2 = ? WHERE id = ?", imageID, c.ID); err != nil {
 			return err
@@ -551,7 +551,7 @@ func (c *Community) DeleteProPic(ctx context.Context) error {
 	}
 	if err := c.DeleteProPicTx(ctx, tx); err != nil {
 		if rErr := tx.Rollback(); rErr != nil {
-			return fmt.Errorf("%w (rollback error: %w)", err, rErr)
+			return fmt.Errorf("%w (ошибка отката: %w)", err, rErr)
 		}
 		return err
 	}
@@ -563,10 +563,10 @@ func (c *Community) DeleteProPicTx(ctx context.Context, tx *sql.Tx) error {
 		return nil
 	}
 	if _, err := c.db.ExecContext(ctx, "UPDATE communities SET pro_pic_2 = NULL where id = ?", c.ID); err != nil {
-		return fmt.Errorf("failed to set communities.pro_pic to null: %w", err)
+		return fmt.Errorf("не удалось установить для communities.pro_pic значение null: %w", err)
 	}
 	if err := images.DeleteImagesTx(ctx, tx, c.db, *c.ProPic.ID); err != nil {
-		return fmt.Errorf("failed to delete pro pic (community: %s): %w", c.Name, err)
+		return fmt.Errorf("не удалось удалить pro pic (сообщество: %s): %w", c.Name, err)
 	}
 	c.ProPic = nil
 	return nil
@@ -585,7 +585,7 @@ func (c *Community) UpdateBannerImage(ctx context.Context, image []byte) error {
 			Fit:    images.ImageFitContain,
 		})
 		if err != nil {
-			return fmt.Errorf("fail to save banner image: %w", err)
+			return fmt.Errorf("не удалось сохранить изображение баннера: %w", err)
 		}
 		if _, err := tx.ExecContext(ctx, "UPDATE communities SET banner_image_2 = ? WHERE id = ?", imageID, c.ID); err != nil {
 			return err
@@ -617,7 +617,7 @@ func (c *Community) DeleteBannerImage(ctx context.Context) error {
 	}
 	if err := c.DeleteBannerImageTx(ctx, tx); err != nil {
 		if rErr := tx.Rollback(); rErr != nil {
-			return fmt.Errorf("%w (rollback error: %w)", err, rErr)
+			return fmt.Errorf("%w (ошибка отката: %w)", err, rErr)
 		}
 		return err
 	}
@@ -629,10 +629,10 @@ func (c *Community) DeleteBannerImageTx(ctx context.Context, tx *sql.Tx) error {
 		return nil
 	}
 	if _, err := tx.ExecContext(ctx, "UPDATE communities SET banner_image_2 = NULL WHERE id = ?", c.ID); err != nil {
-		return fmt.Errorf("failed to set communities.banner to null (community: %s): %w", c.Name, err)
+		return fmt.Errorf("не удалось установить для communities.banner значение null (сообщество: %s): %w", c.Name, err)
 	}
 	if err := images.DeleteImagesTx(ctx, tx, c.db, *c.BannerImage.ID); err != nil {
-		return fmt.Errorf("failed to delete banner image: %w", err)
+		return fmt.Errorf("не удалось удалить изображение баннера: %w", err)
 	}
 	c.BannerImage = nil
 	return nil
@@ -831,7 +831,7 @@ func (c *Community) ModHigherUp(ctx context.Context, higher, lower uid.ID) (bool
 	}
 
 	if rowCount != 2 {
-		return false, fmt.Errorf("select row count is not 2 but %d", rowCount)
+		return false, fmt.Errorf("выберите количество строк, равное не 2, а %d", rowCount)
 	}
 
 	if higherPos <= lowerPos {
@@ -935,7 +935,7 @@ func GetCommunityMods(ctx context.Context, db *sql.DB, community uid.ID) ([]*Use
 			}
 		}
 		if !found {
-			return nil, errors.New("could not found a matching user (fetching community core.Community)")
+			return nil, errors.New("не удалось найти подходящего пользователя (выбираем ядро сообщества.Сообщество)")
 		}
 	}
 
@@ -1242,7 +1242,7 @@ func AddAllUsersToCommunity(ctx context.Context, db *sql.DB, community string) e
 	row := db.QueryRowContext(ctx, "SELECT id FROM communities WHERE name = ?", community)
 	if err := row.Scan(&id); err != nil {
 		if err == sql.ErrNoRows {
-			return fmt.Errorf("community %v not found", community)
+			return fmt.Errorf("сообщество %v не найдено", community)
 		}
 		return err
 	}

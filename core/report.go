@@ -30,7 +30,7 @@ func (r ReportType) MarshalText() ([]byte, error) {
 	case ReportTypeComment:
 		s = "comment"
 	default:
-		return nil, errors.New("unsupported report type")
+		return nil, errors.New("неподдерживаемый тип отчета")
 	}
 	return []byte(s), nil
 }
@@ -43,7 +43,7 @@ func (r *ReportType) UnmarshalText(text []byte) error {
 	case "comment":
 		*r = ReportTypeComment
 	default:
-		return errors.New("unsupported report type")
+		return errors.New("неподдерживаемый тип отчета")
 	}
 	return nil
 }
@@ -285,7 +285,7 @@ func GetReports(ctx context.Context, db *sql.DB, community uid.ID, t ReportType,
 	}
 	for _, r := range reports {
 		if err = r.FetchTarget(ctx); err != nil {
-			return nil, errors.New("couldn't fetch target: " + err.Error())
+			return nil, errors.New("не удалось найти цель:" + err.Error())
 		}
 	}
 	return reports, nil
